@@ -1,0 +1,41 @@
+name: Build Android APK
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup Expo Application CLI
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+
+      - name: Install Project Libraries
+        run: npm install
+
+      - name: Compile Native Android Assets
+        run: npx expo prebuild --platform android
+
+      - name: Bundle Installable APK Package
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Upload Finished Installer to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: bPLAY-Kasi-Streaming-App
+          path: android/app/build/outputs/apk/release/app-release.apk
+          
