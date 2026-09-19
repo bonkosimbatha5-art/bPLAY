@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "bLVCK PLAY",
-    "slug": "bPLAY",
+    "slug": "bplay",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./IMG-20260919-WA2350.jpg",
@@ -15,6 +15,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./IMG-20260919-WA2350.jpg",
         "backgroundColor": "#0a0a0a"
+      }
+    },
+    "sdkVersion": "50.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6e010851-831b-4172-8dc7-f47f5a6f8b76"
       }
     }
   }
