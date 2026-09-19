@@ -41,9 +41,14 @@ export default function App() {
         style={{ height: 380 }}
       >
         {HERO.map((s) => (
-          <ImageBackground key={s.id} source={{ uri: s.img }} style={{ width, height: 380 }}>
+          <ImageBackground 
+            key={s.id} 
+            source={{ uri: s.img }} 
+            style={{ width: width, height: 380 }} // Explicit dimensions fixed here
+            imageStyle={{ width: width, height: 380, resizeMode: 'cover' }} // Forces native display dimensions
+          >
             <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', padding: 16, justifyContent: 'flex-end' }}>
-              <Text style={{ color: '#D4AF37' }}>{s.kicker}</Text>
+              <Text style={{ color: '#D4AF37', fontWeight: 'bold' }}>{s.kicker}</Text>
               <Text style={{ color: '#fff', fontSize: 28, fontWeight: '900' }}>{s.title}</Text>
               <TouchableOpacity 
                 onPress={() => setCurrent(s.title)} 
@@ -57,9 +62,8 @@ export default function App() {
       </ScrollView>
 
       <View style={{ padding: 16 }}>
-        <Text style={{ color: '#D4AF37' }}>Now Playing: {current}</Text>
+        <Text style={{ color: '#D4AF37', fontWeight: '600' }}>Now Playing: {current}</Text>
       </View>
     </View>
   );
-                  }
-                  
+          }
