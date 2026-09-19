@@ -13,6 +13,9 @@
     },
     "android": {
       "package": "com.blvckplay.app",
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./IMG-20260919-WA2350.jpg",
         "backgroundColor": "#0a0a0a"
