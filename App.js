@@ -1,12 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Text, View, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import { Video, ResizeMode } from 'expo-av';
 import Svg, { Path, Circle } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 
-// Reusable SVG Navigation Icons
+// Custom Navigation Bar Icons
 const NavIcon = ({ type, active }) => {
   const color = active ? '#D4AF37' : '#888888';
   if (type === 'home') return (<Svg width="24" height="24" viewBox="0 0 24 24" fill="none"><Path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill={color} /></Svg>);
@@ -17,139 +16,84 @@ const NavIcon = ({ type, active }) => {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
-  const [selectedGenre, setSelectedGenre] = useState('All');
-  const videoPlayerRef = useRef(null);
-  
-  const [videoUrl, setVideoUrl] = useState('https://googleapis.com');
-  const [currentTitle, setCurrentTitle] = useState('Newcastle Cypher Pt. 4');
+  const [currentTrack, setCurrentTrack] = useState('Select a mixtape to play');
 
-  const genresList = ['All', 'Amapiano', 'Deep House', 'Hip-Hop', 'Maskandi'];
-
-  const djMixtapes = [
-    { id: 'm1', genre: 'Amapiano', title: 'Groove Cartel Mix', dj: 'Kabza De Small', length: '1:24:10', color: '#1c170d' },
-    { id: 'm2', genre: 'Deep House', title: 'RedBox Radio Session', dj: 'Black Coffee', length: '58:45', color: '#0d131c' },
-    { id: 'm3', genre: 'Hip-Hop', title: 'Spring Lockdown Cypher', dj: 'Nasty C x Maglera', length: '45:12', color: '#1a101a' },
-    { id: 'm4', genre: 'Maskandi', title: 'Bhaca Tribal Beats', dj: 'Mthandeni SK', length: '1:02:30', color: '#101c14' }
+  // Horizontal sliding genre banner structures
+  const genrebanners = [
+    { id: 'g1', title: 'Deep House', count: '42 Active Tapes', color: '#1a1412' },
+    { id: 'g2', title: 'Amapiano', count: '108 Active Tapes', color: '#1c170d' },
+    { id: 'g3', title: 'Hip-Hop', count: '65 Active Tapes', color: '#15101a' },
+    { id: 'g4', title: 'Maskandi', count: '39 Active Tapes', color: '#101c14' }
   ];
 
-  const playMediaTrack = async (url, title) => {
-    setCurrentTitle(title);
-    setVideoUrl(url);
-    try {
-      if (videoPlayerRef.current) {
-        await videoPlayerRef.current.unloadAsync();
-        await videoPlayerRef.current.loadAsync({ uri: url }, { shouldPlay: true }, true);
-      }
-    } catch (error) {
-      console.log("Playback error: ", error);
-    }
-  };
+  // Lower grid playlist tracks data
+  const djMixtapes = [
+    { id: 'm1', genre: 'Amapiano', title: 'Groove Cartel Vol. 4', dj: 'Kabza De Small', length: '1:24:10', color: '#261f0f' },
+    { id: 'm2', genre: 'Deep House', title: 'RedBox Radio Session', dj: 'Black Coffee', length: '58:45', color: '#111a26' },
+    { id: 'm3', genre: 'Hip-Hop', title: 'Lockdown Cypher Pt. 2', dj: 'Nasty C x Maglera', length: '45:12', color: '#261226' },
+    { id: 'm4', genre: 'Maskandi', title: 'Bhaca Tribal Beats', dj: 'Mthandeni SK', length: '1:02:30', color: '#122619' }
+  ];
 
   const renderContent = () => {
     if (activeTab === 'search') return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: '#fff' }}>Search Engine View</Text></View>;
     if (activeTab === 'live') return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: '#fff' }}>Live TV Stream Feed</Text></View>;
     if (activeTab === 'downloads') return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: '#fff' }}>No Offline Tracks Cached</Text></View>;
 
-    const filteredMixes = selectedGenre === 'All' ? djMixtapes : djMixtapes.filter(m => m.genre === selectedGenre);
-
     return (
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 110 }}>
         
-        {/* Streaming Video Player Window Deck */}
-        <View style={{ width: width, height: 220, backgroundColor: '#000', marginTop: 40, justifyContent: 'center', alignItems: 'center' }}>
-          <Video
-            ref={videoPlayerRef}
-            source={{ uri: videoUrl }}
-            rate={1.0}
-            volume={1.0}
-            isMuted={false}
-            resizeMode={ResizeMode.CONTAIN}
-            shouldPlay={false}
-            useNativeControls
-            style={{ width: width, height: 220 }}
-          />
+        {/* Header Display */}
+        <View style={{ paddingTop: 60, paddingHorizontal: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={{ color: '#fff', fontSize: 24, fontWeight: '900', letterSpacing: 0.5 }}>bLVCK PLAY</Text>
+          <View style={{ backgroundColor: '#111', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+            <Text style={{ color: '#D4AF37', fontSize: 10, fontWeight: 'bold' }}>PREMIUM</Text>
+          </View>
         </View>
 
-        {/* Media Metadata Information Block */}
-        <View style={{ padding: 16, backgroundColor: '#0a0a0a' }}>
-          <Text style={{ color: '#E50914', fontWeight: 'bold', fontSize: 11, letterSpacing: 1 }}>● NOW STREAMING</Text>
-          <Text style={{ color: '#fff', fontSize: 22, fontWeight: '900', marginTop: 4 }}>{currentTitle}</Text>
-          <Text style={{ color: '#666', fontSize: 12, marginTop: 2 }}>bLVCK PLAY Premium Content Hub</Text>
+        {/* Current Audio Player Information Panel Bar */}
+        <View style={{ margin: 16, padding: 16, backgroundColor: '#0d0d0d', borderRadius: 14, borderWidth: 1, borderColor: '#1c1c1c' }}>
+          <Text style={{ color: '#D4AF37', fontWeight: 'bold', fontSize: 10, letterSpacing: 1 }}>NOW PLAYING</Text>
+          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', marginTop: 4 }} numberOfLines={1}>{currentTrack}</Text>
         </View>
 
-        {/* Horizontal Genre Selector Slider Tabs */}
-        <View style={{ marginTop: 10, paddingVertical: 4 }}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16 }}>
-            {genresList.map((g) => (
-              <TouchableOpacity 
-                key={g} 
-                onPress={() => setSelectedGenre(g)}
-                style={{ 
-                  backgroundColor: selectedGenre === g ? '#D4AF37' : '#141414', 
-                  paddingHorizontal: 16, 
-                  paddingVertical: 8, 
-                  borderRadius: 20, 
-                  marginRight: 10,
-                  borderWidth: 1,
-                  borderColor: selectedGenre === g ? '#D4AF37' : '#222'
-                }}
-              >
-                <Text style={{ color: selectedGenre === g ? '#000' : '#aaa', fontWeight: 'bold', fontSize: 13 }}>{g}</Text>
-              </TouchableOpacity>
+        {/* RESTORED: Horizontal Sliding Genre Showcase Banner Sliders */}
+        <View style={{ marginTop: 10 }}>
+          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', marginLeft: 16, marginBottom: 12 }}>Explore Music Genres</Text>
+          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 0 }}>
+            {grentrebanners.map((b) => (
+              <View key={b.id} style={{ width: width, paddingHorizontal: 16 }}>
+                <View style={{ width: '100%', height: 160, backgroundColor: b.color, borderRadius: 16, padding: 20, justifyContent: 'flex-end', borderWidth: 1, borderColor: '#222' }}>
+                  <Text style={{ color: '#D4AF37', fontSize: 12, fontWeight: 'bold' }}>FEATURED CATEGORY</Text>
+                  <Text style={{ color: '#fff', fontSize: 28, fontWeight: '900', marginTop: 2 }}>{b.title}</Text>
+                  <Text style={{ color: '#888', fontSize: 13, marginTop: 4 }}>{b.count} • Swipe left to slide genre</Text>
+                </View>
+              </View>
             ))}
           </ScrollView>
         </View>
 
-        {/* Video Catalog Items list horizontal feed */}
-        <View style={{ padding: 16, marginTop: 10 }}>
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>Trending Video Feeds</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <TouchableOpacity 
-              onPress={() => playMediaTrack('https://googleapis.com', 'Newcastle Cypher Pt. 4')}
-              style={{ width: 150, backgroundColor: '#121212', borderRadius: 12, padding: 10, marginRight: 12, borderWidth: 1, borderColor: '#222' }}
-            >
-              <View style={{ height: 90, backgroundColor: '#1c170d', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
-                <Svg width="28" height="28" viewBox="0 0 24 24"><Path d="M8 5v14l11-7z" fill="#D4AF37" /></Svg>
-              </View>
-              <Text style={{ color: '#fff', fontWeight: 'bold', marginTop: 8, fontSize: 13 }} numberOfLines={1}>Newcastle Cypher</Text>
-              <Text style={{ color: '#666', fontSize: 11, marginTop: 2 }}>Tap to Stream Video</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              onPress={() => playMediaTrack('https://googleapis.com', 'Kasi Anthem Vol. 3')}
-              style={{ width: 150, backgroundColor: '#121212', borderRadius: 12, padding: 10, marginRight: 12, borderWidth: 1, borderColor: '#222' }}
-            >
-              <View style={{ height: 90, backgroundColor: '#0d131c', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
-                <Svg width="28" height="28" viewBox="0 0 24 24"><Path d="M8 5v14l11-7z" fill="#3b82f6" /></Svg>
-              </View>
-              <Text style={{ color: '#fff', fontWeight: 'bold', marginTop: 8, fontSize: 13 }} numberOfLines={1}>Kasi Anthem Vol. 3</Text>
-              <Text style={{ color: '#666', fontSize: 11, marginTop: 2 }}>Tap to Stream Video</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
-
-        {/* DJs Mixtapes Grid Segment section */}
-        <View style={{ padding: 16, marginTop: 5 }}>
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 4 }}>DJs Mixtapes</Text>
-          <Text style={{ color: '#666', fontSize: 12, marginBottom: 12 }}>Top selected genre mixes right now</Text>
+        {/* NEW SEGMENT: DJs Mixtapes Genre Feed Grid list */}
+        <View style={{ padding: 16, marginTop: 15 }}>
+          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 2 }}>DJs Mixtapes</Text>
+          <Text style={{ color: '#555', fontSize: 12, marginBottom: 14 }}>Premium compilation feeds from your favorite artists</Text>
           
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {filteredMixes.map((mix) => (
+            {djMixtapes.map((mix) => (
               <TouchableOpacity 
                 key={mix.id}
-                onPress={() => playMediaTrack('https://googleapis.com', `${mix.dj} - ${mix.title}`)}
-                style={{ width: 160, backgroundColor: '#0d0d0d', borderRadius: 14, padding: 12, marginRight: 14, borderWidth: 1, borderColor: '#1a1a1a' }}
+                onPress={() => setCurrentTrack(`${mix.dj} - ${mix.title}`)}
+                style={{ width: 165, backgroundColor: '#0d0d0d', borderRadius: 16, padding: 12, marginRight: 14, borderWidth: 1, borderColor: '#161616' }}
               >
-                <View style={{ height: 100, backgroundColor: mix.color, borderRadius: 10, justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
-                  <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold', position: 'absolute', top: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>{mix.genre}</Text>
-                  <Svg width="36" height="36" viewBox="0 0 24 24">
-                    <Circle cx="12" cy="12" r="10" fill="#fff" opacity="0.15" />
+                <View style={{ height: 105, backgroundColor: mix.color, borderRadius: 12, justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                  <Text style={{ color: '#fff', fontSize: 9, fontWeight: 'bold', position: 'absolute', top: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.5)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>{mix.genre}</Text>
+                  <Svg width="32" height="32" viewBox="0 0 24 24">
+                    <Circle cx="12" cy="12" r="10" fill="#fff" opacity="0.1" />
                     <Path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" fill="#D4AF37" />
                   </Svg>
                 </View>
-                <Text style={{ color: '#fff', fontWeight: 'bold', marginTop: 10, fontSize: 14 }} numberOfLines={1}>{mix.title}</Text>
-                <Text style={{ color: '#888', fontSize: 12, marginTop: 2 }}>{mix.dj}</Text>
-                <Text style={{ color: '#444', fontSize: 11, marginTop: 4 }}>{mix.length} • Audio Feed</Text>
+                <Text style={{ color: '#fff', fontWeight: 'bold', marginTop: 10, fontSize: 13 }} numberOfLines={1}>{mix.title}</Text>
+                <Text style={{ color: '#777', fontSize: 12, marginTop: 2 }}>{mix.dj}</Text>
+                <Text style={{ color: '#444', fontSize: 10, marginTop: 6, fontWeight: 'bold' }}>{mix.length} • Play Tape</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -164,4 +108,25 @@ export default function App() {
       <StatusBar style="light" />
       {renderContent()}
 
-      
+      {/* Floating Bottom Navigation Tab Bar Dock */}
+      <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#0a0a0a', borderTopWidth: 1, borderColor: '#141414', height: 75, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingBottom: 12 }}>
+        <TouchableOpacity onPress={() => setActiveTab('home')} style={{ alignItems: 'center', width: 60 }}>
+          <NavIcon type="home" active={activeTab === 'home'} />
+          <Text style={{ color: activeTab === 'home' ? '#D4AF37' : '#555', fontSize: 10, marginTop: 5, fontWeight: activeTab === 'home' ? 'bold' : 'normal' }}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab('search')} style={{ alignItems: 'center', width: 60 }}>
+          <NavIcon type="search" active={activeTab === 'search'} />
+          <Text style={{ color: activeTab === 'search' ? '#D4AF37' : '#555', fontSize: 10, marginTop: 5, fontWeight: activeTab === 'search' ? 'bold' : 'normal' }}>Search</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab('live')} style={{ alignItems: 'center', width: 60 }}>
+          <NavIcon type="live" active={activeTab === 'live'} />
+          <Text style={{ color: activeTab === 'live' ? '#D4AF37' : '#555', fontSize: 10, marginTop: 5, fontWeight: activeTab === 'live' ? 'bold' : 'normal' }}>Live</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab('downloads')} style={{ alignItems: 'center', width: 60 }}>
+          <NavIcon type="downloads" active={activeTab === 'downloads'} />
+          <Text style={{ color: activeTab === 'downloads' ? '#D4AF37' : '#555', fontSize: 10, marginTop: 5, fontWeight: activeTab === 'downloads' ? 'bold' : 'normal' }}>Downloads</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
