@@ -25,7 +25,6 @@ export default function App() {
 
   const genresList = ['All', 'Amapiano', 'Deep House', 'Hip-Hop', 'Maskandi'];
 
-  // Mock data for separate DJ Mixtapes row filtered dynamically by genre
   const djMixtapes = [
     { id: 'm1', genre: 'Amapiano', title: 'Groove Cartel Mix', dj: 'Kabza De Small', length: '1:24:10', color: '#1c170d' },
     { id: 'm2', genre: 'Deep House', title: 'RedBox Radio Session', dj: 'Black Coffee', length: '58:45', color: '#0d131c' },
@@ -51,13 +50,12 @@ export default function App() {
     if (activeTab === 'live') return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: '#fff' }}>Live TV Stream Feed</Text></View>;
     if (activeTab === 'downloads') return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ color: '#fff' }}>No Offline Tracks Cached</Text></View>;
 
-    // Filter items based on selected genre indicator tag
     const filteredMixes = selectedGenre === 'All' ? djMixtapes : djMixtapes.filter(m => m.genre === selectedGenre);
 
     return (
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 110 }}>
         
-        {/* Real Embedded Cloud Video Streaming Player Frame */}
+        {/* Streaming Video Player Window Deck */}
         <View style={{ width: width, height: 220, backgroundColor: '#000', marginTop: 40, justifyContent: 'center', alignItems: 'center' }}>
           <Video
             ref={videoPlayerRef}
@@ -72,14 +70,14 @@ export default function App() {
           />
         </View>
 
-        {/* Media Track Header Panel */}
+        {/* Media Metadata Information Block */}
         <View style={{ padding: 16, backgroundColor: '#0a0a0a' }}>
           <Text style={{ color: '#E50914', fontWeight: 'bold', fontSize: 11, letterSpacing: 1 }}>● NOW STREAMING</Text>
           <Text style={{ color: '#fff', fontSize: 22, fontWeight: '900', marginTop: 4 }}>{currentTitle}</Text>
           <Text style={{ color: '#666', fontSize: 12, marginTop: 2 }}>bLVCK PLAY Premium Content Hub</Text>
         </View>
 
-        {/* RESTORED: Horizontal Sliding Genre Filter Row Menu Section */}
+        {/* Horizontal Genre Selector Slider Tabs */}
         <View style={{ marginTop: 10, paddingVertical: 4 }}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16 }}>
             {genresList.map((g) => (
@@ -102,7 +100,7 @@ export default function App() {
           </ScrollView>
         </View>
 
-        {/* Section A: Original Video Catalog Section */}
+        {/* Video Catalog Items list horizontal feed */}
         <View style={{ padding: 16, marginTop: 10 }}>
           <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>Trending Video Feeds</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -130,7 +128,7 @@ export default function App() {
           </ScrollView>
         </View>
 
-        {/* NEW SEGMENT: Top DJ Mixtapes List Display Grid Component */}
+        {/* DJs Mixtapes Grid Segment section */}
         <View style={{ padding: 16, marginTop: 5 }}>
           <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 4 }}>DJs Mixtapes</Text>
           <Text style={{ color: '#666', fontSize: 12, marginBottom: 12 }}>Top selected genre mixes right now</Text>
@@ -154,4 +152,16 @@ export default function App() {
                 <Text style={{ color: '#444', fontSize: 11, marginTop: 4 }}>{mix.length} • Audio Feed</Text>
               </TouchableOpacity>
             ))}
+          </ScrollView>
+        </View>
+
+      </ScrollView>
+    );
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#000000' }}>
+      <StatusBar style="light" />
+      {renderContent()}
+
       
