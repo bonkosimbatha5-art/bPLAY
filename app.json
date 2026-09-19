@@ -2,6 +2,7 @@
   "expo": {
     "name": "bLVCK PLAY",
     "slug": "bplay",
+    "owner": "lsblvcks-team",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./IMG-20260919-WA2350.jpg",
