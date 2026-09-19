@@ -4,16 +4,16 @@
     "slug": "bPLAY",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./IMG-20260919-WA2350.jpg",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./IMG-20260919-WA2350.jpg",
       "backgroundColor": "#0a0a0a",
       "resizeMode": "contain"
     },
     "android": {
       "package": "com.blvckplay.app",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./IMG-20260919-WA2350.jpg",
         "backgroundColor": "#0a0a0a"
       }
     }
