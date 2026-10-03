@@ -17,6 +17,12 @@ export default function App() {
     { id: '5', title: 'Strictly Hip-Hop', url: 'https://soundhelix.com', stripe: '#E6C229' }
   ];
   
+    const mixtapes = [
+    { id: '1', title: 'In The Deep Mixtapes', url: 'https://soundhelix.com', stripe: '#D4AF37' },
+    { id: '2', title: 'Amapiano Balcony', url: 'https://soundhelix.com', stripe: '#FF4500' },
+    { id: '3', title: 'Hop Cypher', url: 'https://soundhelix.com', stripe: '#E6C229' }
+  ];
+  
 
   useEffect(() => {
     return soundInstance ? () => { soundInstance.unloadAsync(); } : undefined;
@@ -95,6 +101,22 @@ export default function App() {
               </View>
               <Text style={styles.cardTitle} numberOfLines={1}>{feed.title}</Text>
               <Text style={styles.cardAction}>Tap to Stream Video</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Horizontal All Tym Mixtapes */}
+      <Text style={styles.sectionHeading}>All Tym Mixtapes</Text>
+      <View style={{ height: 160 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
+          {mixtapes.map((mixtape) => (
+            <TouchableOpacity key={mixtape.id} style={styles.videoCard} onPress={() => changeTrack(mixtape)}>
+              <View style={styles.cardThumbnail}>
+                <Text style={[styles.playTriangle, { color: mixtape.stripe }]}>▶</Text>
+              </View>
+              <Text style={styles.cardTitle} numberOfLines={1}>{mixtape.title}</Text>
+              <Text style={styles.cardAction}>Tap to Play Mixtape</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
