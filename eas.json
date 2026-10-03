@@ -6,13 +6,19 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "ndk": {
+          "abiFilters": ["arm64-v8a"]
+        }
       }
     },
     "production": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "ndk": {
+          "abiFilters": ["arm64-v8a"]
+        }
       }
     }
   }
