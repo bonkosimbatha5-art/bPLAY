@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
-import { Audio } from 'expo-av';
+import { Audio, Video } from 'expo-av';
+
 
 export default function App() {
   const [currentTrack, setCurrentTrack] = useState({ title: 'Newcastle Cypher Pt. 4', url: 'https://soundhelix.com' });
@@ -66,22 +67,25 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      {/* Upper Navigation and Core Video Viewport */}
-      <View style={styles.videoPlayer}>
-        <View style={styles.topControls}>
-          <Text style={styles.navArrow}>⏮</Text>
-          <TouchableOpacity onPress={handleAudioPlayback} disabled={isLoading}>
-            {isLoading ? <ActivityIndicator size="small" color="#FFF" /> : <Text style={styles.navArrow}>{isPlaying ? '⏸' : '▶'}</Text>}
-          </TouchableOpacity>
-          <Text style={styles.navArrow}>⏭</Text>
-        </View>
-        <View style={styles.timeRow}>
-          <Text style={styles.timeText}>00:00</Text>
-          <View style={styles.timelineBar}><View style={styles.timelineDot} /></View>
-          <Text style={styles.timeText}>00:00</Text>
-          <Text style={styles.fullscreenIcon}>⛶</Text>
-        </View>
+      {/* Active Video Player Viewport */}
+      <View style={styles.videoContainer}>
+        <Video
+          source={{ uri: currentTrack.url }}
+          rate={1.0}
+          volume={1.0}
+          isMuted={false}
+          resizeMode="contain"
+          shouldPlay={isPlaying}
+          useNativeControls
+          style={styles.videoScreen}
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinish) {
+              setIsPlaying(false);
+            }
+          }}
+        />
       </View>
+
   <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
     
       {/* Track Details */}
@@ -146,7 +150,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000000' },
-  videoPlayer: { backgroundColor: '#050505', height: 200, justifyContent: 'center', paddingHorizontal: 20 },
+  videoContainer: { backgroundColor: '#050505', height: 210, width: '100%', justifyContent: 'center', overflow: 'hidden' },
+  videoScreen: { width: '100%', height: '100%' },
   topControls: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 50, marginBottom: 40 },
   navArrow: { color: '#FFF', fontSize: 24 },
   timeRow: { flexDirection: 'row', alignItems: 'center', width: '100%' },
