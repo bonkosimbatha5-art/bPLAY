@@ -4,7 +4,7 @@ import { Audio, Video } from 'expo-av';
 
 
 export default function App() {
-  const [currentTrack, setCurrentTrack] = useState({ title: 'Newcastle Cypher Pt. 4', url: 'https://soundhelix.com' });
+  const [currentTrack, setCurrentTrack] = useState({ title: 'Select Culture to Stream', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' });;
   const [isPlaying, setIsPlaying] = useState(false);
   const [soundInstance, setSoundInstance] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
