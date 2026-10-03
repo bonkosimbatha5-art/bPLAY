@@ -11,12 +11,13 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('Home');
 
   const feeds = [
-    { id: '1', title: 'Maskandi', url: 'https://soundhelix.com', stripe: '#D4AF37' },
-    { id: '2', title: 'Deep House Session', url: 'https://soundhelix.com', stripe: '#1E90FF' },
-    { id: '3', title: 'Amapiano Grooves', url: 'https://soundhelix.com', stripe: '#FF4500' },
-    { id: '4', title: 'Gqomu Bangers', url: 'https://soundhelix.com', stripe: '#00A896' },
-    { id: '5', title: 'Strictly Hip-Hop', url: 'https://soundhelix.com', stripe: '#E6C229' }
-  ];
+  { id: '1', title: 'Maskandi', url: 'https://googleapis.com', stripe: '#D4AF37' },
+  { id: '2', title: 'Deep House Session', url: 'https://googleapis.com', stripe: '#1E90FF' },
+  { id: '3', title: 'Amapiano Grooves', url: 'https://googleapis.com', stripe: '#FF4500' },
+  { id: '4', title: 'Gqomu Bangers', url: 'https://googleapis.com', stripe: '#00A896' },
+  { id: '5', title: 'Strictly Hip-Hop', url: 'https://googleapis.com', stripe: '#E6C229' }
+];
+
   
     const mixtapes = [
     { id: '1', title: 'In The Deep Mixtapes', url: 'https://soundhelix.com', stripe: '#D4AF37' },
