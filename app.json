@@ -6,10 +6,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./IMG-20260919-WA2350.jpg",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./IMG-20260919-WA2350.jpg",
-      "backgroundColor": "#0a0a0a",
-      "resizeMode": "contain"
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
     },
     "android": {
       "package": "com.blvckplay.app",
