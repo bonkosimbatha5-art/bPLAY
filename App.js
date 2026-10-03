@@ -82,7 +82,8 @@ export default function App() {
           <Text style={styles.fullscreenIcon}>⛶</Text>
         </View>
       </View>
-
+  <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+    
       {/* Track Details */}
       <View style={styles.metaContainer}>
         <Text style={styles.streamingTag}>• NOW STREAMING</Text>
@@ -123,7 +124,8 @@ export default function App() {
       </View>
 
       <View style={{ flex: 1 }} />
-
+</ScrollView>
+        
       {/* Restored Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
         {[
