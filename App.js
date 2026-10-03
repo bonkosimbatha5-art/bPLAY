@@ -1,97 +1,146 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
+import { Audio } from 'expo-av';
 
 export default function App() {
-  const [currentTrack, setCurrentTrack] = useState('Newcastle Cypher Pt. 4');
+  const [currentTrack, setCurrentTrack] = useState({ title: 'Newcastle Cypher Pt. 4', url: 'https://soundhelix.com' });
   const [isPlaying, setIsPlaying] = useState(false);
+  const [soundInstance, setSoundInstance] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('Home');
 
   const feeds = [
-    { id: '1', title: 'Newcastle Cypher Pt. 4', stripe: '#D4AF37' },
-    { id: '2', title: 'Kasi Anthem Vol. 3', stripe: '#1E90FF' },
-    { id: '3', title: 'Gqom Mix Live - Osizweni', stripe: '#FF4500' }
+    { id: '1', title: 'Newcastle Cypher Pt. 4', url: 'https://soundhelix.com', stripe: '#D4AF37' },
+    { id: '2', title: 'Kasi Anthem Vol. 3', url: 'https://soundhelix.com', stripe: '#1E90FF' },
+    { id: '3', title: 'Gqom Mix Live', url: 'https://soundhelix.com', stripe: '#FF4500' }
   ];
+
+  useEffect(() => {
+    return soundInstance ? () => { soundInstance.unloadAsync(); } : undefined;
+  }, [soundInstance]);
+
+  async function handleAudioPlayback() {
+    try {
+      if (soundInstance !== null) {
+        if (isPlaying) {
+          await soundInstance.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          await soundInstance.playAsync();
+          setIsPlaying(true);
+        }
+      } else {
+        await loadAndPlayAudio(currentTrack.url);
+      }
+    } catch (error) {
+      console.log("Audio Error: ", error);
+    }
+  }
+
+  async function loadAndPlayAudio(url) {
+    setIsLoading(true);
+    if (soundInstance) {
+      await soundInstance.unloadAsync();
+    }
+    const { sound } = await Audio.Sound.createAsync({ uri: url }, { shouldPlay: true });
+    setSoundInstance(sound);
+    setIsPlaying(true);
+    setIsLoading(false);
+  }
+
+  async function changeTrack(track) {
+    setCurrentTrack(track);
+    await loadAndPlayAudio(track.url);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      {/* Top Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>bLVCK PLAY</Text>
+      {/* Upper Navigation and Core Video Viewport */}
+      <View style={styles.videoPlayer}>
+        <View style={styles.topControls}>
+          <Text style={styles.navArrow}>⏮</Text>
+          <TouchableOpacity onPress={handleAudioPlayback} disabled={isLoading}>
+            {isLoading ? <ActivityIndicator size="small" color="#FFF" /> : <Text style={styles.navArrow}>{isPlaying ? '⏸' : '▶'}</Text>}
+          </TouchableOpacity>
+          <Text style={styles.navArrow}>⏭</Text>
+        </View>
+        <View style={styles.timeRow}>
+          <Text style={styles.timeText}>00:00</Text>
+          <View style={styles.timelineBar}><View style={styles.timelineDot} /></View>
+          <Text style={styles.timeText}>00:00</Text>
+          <Text style={styles.fullscreenIcon}>⛶</Text>
+        </View>
       </View>
 
-      {/* Main Video Viewport Window */}
-      <View style={styles.videoPlayer}>
-        <View style={styles.placeholderIconContainer}>
-          <Text style={styles.logoB}>b</Text>
-          <Text style={styles.logoPlay}>PLAY</Text>
-        </View>
+      {/* Track Details */}
+      <View style={styles.metaContainer}>
         <Text style={styles.streamingTag}>• NOW STREAMING</Text>
-        <Text style={styles.trackTitle}>{currentTrack}</Text>
+        <Text style={styles.trackTitle}>{currentTrack.title}</Text>
         <Text style={styles.subTitle}>bLVCK PLAY Premium Content Hub</Text>
       </View>
 
-      {/* Timeline Tracker */}
-      <View style={styles.timelineContainer}>
-        <Text style={styles.timeText}>00:00</Text>
-        <View style={styles.progressBar}><View style={styles.progressDot} /></View>
-        <Text style={styles.timeText}>05:00</Text>
-      </View>
-
-      {/* Media Interaction Buttons */}
-      <View style={styles.controlsRow}>
-        <TouchableOpacity><Text style={styles.controlBtn}>⏮</Text></TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsPlaying(!isPlaying)}>
-          <Text style={styles.playBtn}>{isPlaying ? '⏸' : '▶'}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity><Text style={styles.controlBtn}>⏭</Text></TouchableOpacity>
-      </View>
-
-      {/* Trending Feeds List */}
+      {/* Horizontal Trending Feeds */}
       <Text style={styles.sectionHeading}>Trending Video Feeds</Text>
-      <ScrollView style={styles.feedScroll}>
-        {feeds.map((feed) => (
-          <TouchableOpacity 
-            key={feed.id} 
-            style={styles.feedCard}
-            onPress={() => setCurrentTrack(feed.title)}
-          >
-            <View style={[styles.cardStripe, { backgroundColor: feed.stripe }]} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>{feed.title}</Text>
+      <View style={{ height: 160 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
+          {feeds.map((feed) => (
+            <TouchableOpacity key={feed.id} style={styles.videoCard} onPress={() => changeTrack(feed)}>
+              <View style={styles.cardThumbnail}>
+                <Text style={[styles.playTriangle, { color: feed.stripe }]}>▶</Text>
+              </View>
+              <Text style={styles.cardTitle} numberOfLines={1}>{feed.title}</Text>
               <Text style={styles.cardAction}>Tap to Stream Video</Text>
-            </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      <View style={{ flex: 1 }} />
+
+      {/* Restored Bottom Navigation Bar */}
+      <View style={styles.bottomNav}>
+        {[
+          { name: 'Home', icon: '🏠' },
+          { name: 'Search', icon: '🔍' },
+          { name: 'Live', icon: '▶' },
+          { name: 'Downloads', icon: '📥' }
+        ].map((tab) => (
+          <TouchableOpacity key={tab.name} style={styles.navItem} onPress={() => setActiveTab(tab.name)}>
+            <Text style={[styles.navIcon, { color: activeTab === tab.name ? '#D4AF37' : '#888' }]}>{tab.icon}</Text>
+            <Text style={[styles.navText, { color: activeTab === tab.name ? '#D4AF37' : '#888' }]}>{tab.name}</Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000000' },
-  header: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#222', alignItems: 'center' },
-  headerTitle: { color: '#FFF', fontSize: 18, fontWeight: 'bold', letterSpacing: 2 },
-  videoPlayer: { backgroundColor: '#111', padding: 20, margin: 16, borderRadius: 12, alignItems: 'center' },
-  placeholderIconContainer: { width: 80, height: 80, backgroundColor: '#000', borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 15, borderWidth: 1, borderColor: '#D4AF37' },
-  logoB: { color: '#D4AF37', fontSize: 36, fontWeight: 'bold', fontStyle: 'italic' },
-  logoPlay: { color: '#D4AF37', fontSize: 10, fontWeight: 'bold', letterSpacing: 1 },
-  streamingTag: { color: '#FF3B30', fontSize: 12, fontWeight: 'bold', alignSelf: 'flex-start', marginTop: 10 },
-  trackTitle: { color: '#FFF', fontSize: 22, fontWeight: 'bold', alignSelf: 'flex-start', marginTop: 5 },
-  subTitle: { color: '#888', fontSize: 13, alignSelf: 'flex-start', marginTop: 2 },
-  timelineContainer: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginVertical: 10 },
-  timeText: { color: '#888', fontSize: 12 },
-  progressBar: { flex: 1, height: 3, backgroundColor: '#333', marginHorizontal: 10, justifyContent: 'center' },
-  progressDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#D4AF37' },
-  controlsRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 15 },
-  controlBtn: { color: '#D4AF37', fontSize: 28, marginHorizontal: 30 },
-  playBtn: { color: '#D4AF37', fontSize: 40, marginHorizontal: 20 },
-  sectionHeading: { color: '#FFF', fontSize: 16, fontWeight: 'bold', marginLeft: 16, marginTop: 10, marginBottom: 5 },
-  feedScroll: { flex: 1, paddingHorizontal: 16 },
-  feedCard: { backgroundColor: '#121212', borderRadius: 8, marginBottom: 12, flexDirection: 'row', overflow: 'hidden', height: 75, alignItems: 'center' },
-  cardStripe: { width: 5, height: '100%' },
-  cardContent: { paddingLeft: 15 },
-  cardTitle: { color: '#FFF', fontSize: 15, fontWeight: 'bold' },
-  cardAction: { color: '#888', fontSize: 12, marginTop: 4 }
+  videoPlayer: { backgroundColor: '#050505', height: 200, justifyContent: 'center', paddingHorizontal: 20 },
+  topControls: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 50, marginBottom: 40 },
+  navArrow: { color: '#FFF', fontSize: 24 },
+  timeRow: { flexDirection: 'row', alignItems: 'center', width: '100%' },
+  timeText: { color: '#FFF', fontSize: 12 },
+  timelineBar: { flex: 1, height: 2, backgroundColor: '#333', marginHorizontal: 10, justifyContent: 'center' },
+  timelineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#00A896' },
+  fullscreenIcon: { color: '#FFF', fontSize: 14, marginLeft: 10 },
+  metaContainer: { paddingHorizontal: 16, marginTop: 20 },
+  streamingTag: { color: '#FF3B30', fontSize: 12, fontWeight: 'bold' },
+  trackTitle: { color: '#FFF', fontSize: 26, fontWeight: 'bold', marginTop: 5 },
+  subTitle: { color: '#888', fontSize: 13, marginTop: 2 },
+  sectionHeading: { color: '#FFF', fontSize: 16, fontWeight: 'bold', marginLeft: 16, marginTop: 25, marginBottom: 15 },
+  horizontalScroll: { paddingHorizontal: 16, gap: 16 },
+  videoCard: { width: 160 },
+  cardThumbnail: { width: 160, height: 100, backgroundColor: '#111', borderRadius: 12, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#222' },
+  playTriangle: { fontSize: 20 },
+  cardTitle: { color: '#FFF', fontSize: 14, fontWeight: 'bold', marginTop: 8 },
+  cardAction: { color: '#555', fontSize: 11, marginTop: 2 },
+  bottomNav: { flexDirection: 'row', height: 65, borderTopWidth: 1, borderTopColor: '#111', backgroundColor: '#000' },
+  navItem: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  navIcon: { fontSize: 18 },
+  navText: { fontSize: 10, marginTop: 4 }
 });
-                   
+              
